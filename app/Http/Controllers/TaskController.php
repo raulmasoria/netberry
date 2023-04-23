@@ -13,20 +13,36 @@ class TaskController extends Controller
     public function index()
     {
         
-        $tasks = Task::all();
-        $categorieTask = Category_task::all();
-        $categories = Category::all();
+        $tasks = DB::table('tasks as t')
+            ->join('category_tasks as ct', 't.id', '=', 'ct.task_id')
+            ->join('categories as c', 'ct.category_id', '=', 'c.id')
+            ->select('t.id as task_id','c.id as categorie_id', 't.name as task_name', 'c.name as categorie_name')
+            ->get();
 
+        $arrayTasks = array();
+        foreach($tasks as $task)
+        {
+            if(!empty($arrayTasks[$task->task_id])){
+                array_push($arrayTasks[$task->task_id]['categories'], $task->categorie_name);
+            } else {
+                $arrayTasks[$task->task_id] = array("name" => $task->task_name, "categories" => array($task->categorie_name));
+            }
+            
+        }    
+
+        $categories = Category::all();
+        
         $arrayCategories = array();
-        foreach($categories as $categorie){
-            $arrayCategories[$categorie['id']] = array("name" => $categorie->name);
+        foreach($categories as $categorie)
+        {
+            $arrayCategories[$categorie->id] = array("name" => $categorie->name);
         }
 
         return view('gestor-tareas',[
             'categories' => $arrayCategories,
-            'tasks' => $tasks,
-            'categorieTasks' => $categorieTask
+            'tasks' => $arrayTasks
         ]);
+
     }
 
     public function store(Request $request, Task $task)

@@ -27,18 +27,17 @@
                     </thead>
                     
                     <tbody class="divide-y">
-                        @foreach ($tasks as $task)                        
+                        @foreach ($tasks as $task_id => $task)                        
                             <tr>
-                                <td class="text-base p-2">{{$task->name}}</td>
+                                <td class="text-base p-2">{{$task['name']}}</td>
                                 <td class="text-base" style="text-align: center">
-                                    @foreach ($categorieTasks as $categorieTask)
-                                        @if ($categorieTask->task_id == $task->id)                                           
-                                            <label class="m-2 px-6 bg-gray-300 border-2 border-gray-500">{{$categories[$categorieTask->category_id]['name']}}</label>
-                                        @endif
+                                    @foreach ($task['categories'] as $categorie)
+                                        <label class="m-2 px-6 bg-gray-300 border-2 border-gray-500">{{$categorie}}</label>
                                     @endforeach
+                                    
                                 </td>
                                 <td class="text-base" style="text-align: center">
-                                    <button id="{{$task->id}}" class="mx-auto deleteTask">
+                                    <button id="{{$task_id}}" class="mx-auto deleteTask">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-red">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
